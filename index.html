@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Data Buku Perpustakaan</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Daftar Buku Perpustakaan</h1>
+
+    <form id="bookForm">
+      <input type="text" id="judul" placeholder="Judul Buku" required>
+      <input type="text" id="penulis" placeholder="Penulis" required>
+      <input type="number" id="tahun" placeholder="Tahun Terbit" required>
+      <button type="submit" id="submitBtn">Tambah Buku</button>
+    </form>
+
+    <table id="bookTable">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Judul</th>
+          <th>Penulis</th>
+          <th>Tahun</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Data akan ditambahkan di sini -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    let books = [];
+    let editIndex = -1;
+
+    const form = document.getElementById('bookForm');
+    const tableBody = document.querySelector('#bookTable tbody');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const judul = document.getElementById('judul').value;
+      const penulis = document.getElementById('penulis').value;
+      const tahun = document.getElementById('tahun').value;
+
+      const bookData = { judul, penulis, tahun };
+
+      if (editIndex === -1) {
+        // Tambah data baru
+        books.push(bookData);
+      } else {
+        // Update data yang diedit
+        books[editIndex] = bookData;
+        editIndex = -1;
+        submitBtn.textContent = "Tambah Buku";
+      }
+
+      form.reset();
+      updateTable();
+    });
+
+    function updateTable() {
+      tableBody.innerHTML = '';
+      books.forEach((buku, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${buku.judul}</td>
+          <td>${buku.penulis}</td>
+          <td>${buku.tahun}</td>
+          <td>
+            <button onclick="editBook(${index})">Edit</button>
+            <button onclick="deleteBook(${index})">Hapus</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    function deleteBook(index) {
+      books.splice(index, 1);
+      updateTable();
+    }
+
+    function editBook(index) {
+      const buku = books[index];
+      document.getElementById('judul').value = buku.judul;
+      document.getElementById('penulis').value = buku.penulis;
+      document.getElementById('tahun').value = buku.tahun;
+      editIndex = index;
+      submitBtn.textContent = "Simpan Perubahan";
+    }
+  </script>
+
+  <script src="js/model.js"></script>
+  <script src="js/view.js"></script>
+  <script src="js/controller.js"></script>
+</body>
+</html>
